@@ -29,6 +29,8 @@ async function testAuthenticate() {
 
 testAuthenticate();
 
+require("./src/model/trip")();
+
 // Routes
 require("./src/routes")(app);
 

@@ -10,5 +10,6 @@ module.exports = () => {
     host: "database", // Docker Service Name
     dialect: "mariadb",
   });
+
   return sequelize;
 };
