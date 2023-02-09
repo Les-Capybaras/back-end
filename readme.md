@@ -29,12 +29,12 @@ docker-compose up --build
 ```sh
 localhost:5000/api
 ```
-- Adminer on :
+- Adminer on (Env value to log in):
 ```sh
 localhost:8080
 ```
 
-- RabbitMq on : 
+- RabbitMq on (guest / guest to log in): 
 ```sh
 localhost:15672
 ```
