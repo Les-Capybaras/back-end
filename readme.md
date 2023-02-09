@@ -24,3 +24,17 @@
 ```sh
 docker-compose up --build
 ```
+# You can access to :
+- The API on :
+```sh
+localhost:5000/api
+```
+- Adminer on :
+```sh
+localhost:8080
+```
+
+- RabbitMq on : 
+```sh
+localhost:15672
+```
