@@ -46,12 +46,8 @@ app.use('/', (req, res)=>{
   res.send("Hello World");
 });
 
-const queue = 'messages';
-
-amqplib.connect('amqp://host.docker.internal', (err, conn) => {
+amqplib.connect('amqp://host.docker.internal:5672', (err, conn) => {
   if (err) throw err;
-
-  if (conn) console.log('Succes connection to Amqp');
-
+  if (conn) console.log('Success connection to Amqp');
 });
 
