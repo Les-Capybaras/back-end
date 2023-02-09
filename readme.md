@@ -3,7 +3,7 @@
 ## What's in it for me ?
 
 - MariaDB Database
-- A PhpMyAdmin instance to manage the DB
+- A Adminer instance to manage the DB
 - An empty Express Api
 - Nginx based Web Server
 - A RabbitMq instance
