@@ -1,21 +1,21 @@
 const sequelize = require("../database")();
 const User = require("../models/User");
+const bcrypt = require('bcryptjs');
+
+async function hashPassword(password) {
+  const salt = await bcrypt.genSalt(10);
+  const encryptedPassword = await bcrypt.hash(password, salt);
+  return encryptedPassword;
+}
 
 // Create and Save a new Tutorial
 exports.create = (req, res) => {
-  // Validate request
-  if (!req.body.title) {
-    res.status(400).send({
-      message: "Content can not be empty!",
-    });
-    return;
-  }
 
   // Create a User
   const user = {
-    userName: req.body.username,
+    userName: req.body.userName,
     email: req.body.email,
-    password: req.body.password,
+    password: hashPassword(req.body.password),
   };
 
   // Save User in the database
