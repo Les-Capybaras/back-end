@@ -17,6 +17,8 @@
 | Docker             |
 | Docker Compose     |
 
+## Create a .env file following the .env.dist template
+
 ## Start the containers with Docker
 
 ```sh
