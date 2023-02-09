@@ -1,4 +1,4 @@
-# Template Docker Express Mq
+# PapoteCar Back-End
 
 ## What's in it for me ?
 
@@ -16,6 +16,8 @@
 | ------------------ |
 | Docker             |
 | Docker Compose     |
+
+## Create a .env file following the .env.dist template
 
 ## Start the containers with Docker
 
