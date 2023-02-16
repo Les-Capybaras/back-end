@@ -17,23 +17,27 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    car: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
   },
   {
     // Other model options go here
-    freezeTableName: true
+    freezeTableName: true,
   }
 );
 
-User.sync({ force: true })
-  .then(() => {
-    console.log("Synced db.");
-  })
-  .catch((err) => {
-    console.log("Failed to sync db: " + err.message);
-  });
+// User.sync({ force: true })
+//   .then(() => {
+//     console.log("Synced user entity.");
+//   })
+//   .catch((err) => {
+//     console.log("Failed to sync user entity: " + err.message);
+//   });
+
+// Car.sync({ force: true })
+//   .then(() => {
+//     console.log("Synced car entity.");
+//   })
+//   .catch((err) => {
+//     console.log("Failed to sync car entity: " + err.message);
+//   });
 
 module.exports = User;

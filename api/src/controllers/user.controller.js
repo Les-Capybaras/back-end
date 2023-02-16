@@ -2,6 +2,7 @@ const sequelize = require("../database")();
 const User = require("../models/User");
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const Car = require("../models/Car");
 
 async function hashPassword(password) {
   const salt = await bcrypt.genSalt(10);
@@ -74,7 +75,7 @@ exports.create = async (req, res) => {
 
 // Retrieve all users from the database.
 exports.findAll = (req, res) => {
-  User.findAll()
+  User.findAll({ include: Car })
     .then((data) => {
       let users = [];
       data.forEach(user => {
@@ -95,7 +96,7 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.user.id;
 
-  User.findByPk(id)
+  User.findByPk(id, { include: Car })
     .then((data) => {
       let { password, ...userWithoutPassword } = data.dataValues;
       res.send(userWithoutPassword);
