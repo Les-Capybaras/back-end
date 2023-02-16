@@ -32,6 +32,7 @@ testAuthenticate();
 // Routes
 // require("./src/routes")(app);
 require("./src/routes/user.routes")(app);
+require("./src/routes/auth.routes")(app);
 
 // Test connection to RabbitMQ
 // amqplib.connect("amqp://host.docker.internal:5672", (err, conn) => {

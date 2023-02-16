@@ -1,28 +1,18 @@
 module.exports = app => {
     const users = require("../controllers/user.controller.js");
+    
+    const { isAuth } = require("../middlewares/auth");
   
     var router = require("express").Router();
+
+    // Retrieve all Users
+    router.get("/", isAuth, users.findAll);
   
-    // Create a new Tutorial
-    router.post("/", users.create);
+    // Update a User with id
+    router.put("/:id", isAuth, users.update);
   
-    // Retrieve all Tutorials
-    router.get("/", users.findAll);
-  
-    // // Retrieve all published Tutorials
-    // router.get("/published", tutorials.findAllPublished);
-  
-    // // Retrieve a single Tutorial with id
-    // router.get("/:id", tutorials.findOne);
-  
-    // // Update a Tutorial with id
-    // router.put("/:id", tutorials.update);
-  
-    // // Delete a Tutorial with id
-    // router.delete("/:id", tutorials.delete);
-  
-    // // Delete all Tutorials
-    // router.delete("/", tutorials.deleteAll);
+    // Delete a User with id
+    router.delete("/:id", isAuth, users.delete);
   
     app.use('/api/users', router);
   };
