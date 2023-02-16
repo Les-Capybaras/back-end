@@ -15,7 +15,8 @@ exports.create = (req, res) => {
   const Trip = {
     state: req.body.state,
     startDate: req.body.startDate,
-    seats: req.body.seats
+    seats: req.body.seats,
+    driver: req.body.driver
   };
 
   // Save User in the database
@@ -33,6 +34,7 @@ exports.create = (req, res) => {
 
 // Retrieve all Tutorials from the database.
 exports.findAll = (req, res) => {
+  console.log(Trip);
   Trip.findAll()
     .then((data) => {
       res.send(data);

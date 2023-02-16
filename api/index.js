@@ -15,25 +15,16 @@ app.use(bodyParser.json());
 dotenv.config();
 const PORT = process.env.API_PORT || 5000;
 
-const sequelize = require("./src/database")();
+//
+require("./src/models/User");
+require("./src/models/Trip");
+require("./src/models/Passenger");
 
-// Test connection to database
-async function testAuthenticate() {
-  try {
-    await sequelize.authenticate();
-    console.log("[DATABASE] - Connection has been established successfully.");
-  } catch (error) {
-    console.error("[DATABASE] - Unable to connect to the database:", error);
-  }
-}
-
-testAuthenticate();
-
-require("./src/models/Trip")();
 
 // Routes
-// require("./src/routes")(app);
+//require("./src/routes")(app);
 require("./src/routes/user.routes")(app);
+require("./src/routes/trip.routes")(app);
 
 // Test connection to RabbitMQ
 // amqplib.connect("amqp://host.docker.internal:5672", (err, conn) => {

@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
+const User = require('./User');
 const sequelize = require('../database')()
 
-module.exports = () => {
-    const Trip = sequelize.define('Trip', {
+const Trip = sequelize.define('Trip', {
     state: {
         type: DataTypes.ENUM,
         values: ['En attente', 'En cours', 'Terminé'],
@@ -21,7 +21,9 @@ module.exports = () => {
         freezeTableName: true
     });
 
-    sequelize.sync()
+    Trip.driver = Trip.hasOne(User)
+
+    Trip.sync({ force: true })
     .then(() => {
         console.log("Synced db.");
     })
@@ -29,7 +31,5 @@ module.exports = () => {
         console.log("Failed to sync db: " + err.message);
     });
 
-    return Trip
-};
-
+module.exports = Trip;
 

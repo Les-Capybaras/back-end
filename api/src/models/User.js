@@ -21,6 +21,10 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    tripId: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    }
   },
   {
     // Other model options go here
