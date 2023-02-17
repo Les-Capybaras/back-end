@@ -1,4 +1,4 @@
-const sequelize = require("../database")();
+const sequelize = require("../database");
 const Trip = require("../models/Trip");
 
 // Create and Save a new Tutorial

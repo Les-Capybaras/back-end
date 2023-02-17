@@ -1,4 +1,4 @@
-const sequelize = require("../database")();
+const sequelize = require("../database");
 const Car = require("../models/Car");
 const User = require("../models/User");
 

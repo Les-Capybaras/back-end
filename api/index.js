@@ -15,11 +15,8 @@ app.use(bodyParser.json());
 dotenv.config();
 const PORT = process.env.API_PORT || 5000;
 
-//
-require("./src/models/User");
-require("./src/models/Trip");
-require("./src/models/Passenger");
-
+// Models
+require("./src/models/sync")();
 
 // Routes
 //require("./src/routes")(app);
@@ -28,7 +25,6 @@ require("./src/routes/trip.routes")(app);
 require("./src/routes/auth.routes")(app);
 require("./src/routes/car.routes")(app);
 
-require("./src/models/sync")(sequelize);
 
 
 // Test connection to RabbitMQ

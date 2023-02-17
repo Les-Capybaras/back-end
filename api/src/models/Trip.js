@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const User = require('./User');
-const sequelize = require('../database')()
+const sequelize = require('../database')
 
 const Trip = sequelize.define('Trip', {
     state: {
@@ -26,22 +26,6 @@ const Trip = sequelize.define('Trip', {
     }
     }, {
         freezeTableName: true
-    });
-
-    Trip.belongsTo(User, {
-        foreignKey: 'driver',
-    })
-    User.hasMany(Trip, {
-        foreignKey: 'driver',
-        allowNull: true
-    });
-
-    Trip.sync({ force: true })
-    .then(() => {
-        console.log("Synced Trip.");
-    })
-    .catch((err) => {
-        console.log("Failed to sync Trip: " + err.message);
     });
 
 module.exports = Trip;
