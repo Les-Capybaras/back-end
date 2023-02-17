@@ -9,27 +9,13 @@ const Passenger = sequelize.define('Passenger', {
         values: ['En attente', 'Accepté'],
         allowNull: false,
         defaultValue: 'En attente'
-    },
-    userId: {
-      type: DataTypes.INTEGER
-    },
-    tripId: {
-      type: DataTypes.INTEGER
     }
-}, { timestamps: false });
+}, { freezeTableName: true });
 
-User.hasMany(Passenger, {
-    foreignKey: "userId",
-});
-Passenger.belongsTo(User, {
-    foreignKey: "userId",
-});
-Trip.hasMany(Passenger, {
-    foreignKey: "tripId",
-});
-Passenger.belongsTo(Trip, {
-    foreignKey: "tripId",
-});
+User.hasMany(Passenger); 
+Passenger.belongsTo(User);
+Trip.hasMany(Passenger);
+Passenger.belongsTo(Trip);
 
 Passenger.sync({ force: true })
 .then(() => {

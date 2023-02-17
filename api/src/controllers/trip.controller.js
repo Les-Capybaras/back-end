@@ -16,13 +16,14 @@ exports.create = (req, res) => {
     state: req.body.state,
     startDate: req.body.startDate,
     seats: req.body.seats,
-    driver: req.body.driver
   };
 
   // Save User in the database
   Trip.create(trip)
     .then((data) => {
       res.send(data);
+
+      // Here insert Segment dependecies 
     })
     .catch((err) => {
       res.status(500).send({
@@ -34,7 +35,6 @@ exports.create = (req, res) => {
 
 // Retrieve all Tutorials from the database.
 exports.findAll = (req, res) => {
-  console.log(Trip);
   Trip.findAll()
     .then((data) => {
       res.send(data);

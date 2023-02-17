@@ -20,10 +20,6 @@ const User = sequelize.define(
     car: {
       type: DataTypes.STRING,
       allowNull: true,
-    },
-    tripId: {
-      type: DataTypes.INTEGER,
-      allowNull: true
     }
   },
   {
@@ -34,10 +30,10 @@ const User = sequelize.define(
 
 User.sync({ force: true })
   .then(() => {
-    console.log("Synced db.");
+    console.log("Synced user.");
   })
   .catch((err) => {
-    console.log("Failed to sync db: " + err.message);
+    console.log("Failed to sync User: " + err.message);
   });
 
 module.exports = User;

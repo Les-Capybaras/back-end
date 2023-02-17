@@ -16,19 +16,32 @@ const Trip = sequelize.define('Trip', {
     seats: {
         type: DataTypes.INTEGER,
         allowNull: false
+    },
+    driver: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: User,
+            key: 'id'
+        }
     }
     }, {
         freezeTableName: true
     });
 
-    Trip.driver = Trip.hasOne(User)
+    Trip.belongsTo(User, {
+        foreignKey: 'driver',
+    })
+    User.hasMany(Trip, {
+        foreignKey: 'driver',
+        allowNull: true
+    });
 
     Trip.sync({ force: true })
     .then(() => {
-        console.log("Synced db.");
+        console.log("Synced Trip.");
     })
     .catch((err) => {
-        console.log("Failed to sync db: " + err.message);
+        console.log("Failed to sync Trip: " + err.message);
     });
 
 module.exports = Trip;
