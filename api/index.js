@@ -26,6 +26,10 @@ require("./src/models/Passenger");
 require("./src/routes/user.routes")(app);
 require("./src/routes/trip.routes")(app);
 require("./src/routes/auth.routes")(app);
+require("./src/routes/car.routes")(app);
+
+require("./src/models/sync")(sequelize);
+
 
 // Test connection to RabbitMQ
 // amqplib.connect("amqp://host.docker.internal:5672", (err, conn) => {

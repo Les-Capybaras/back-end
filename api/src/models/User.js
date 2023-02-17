@@ -16,24 +16,28 @@ const User = sequelize.define(
     email: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    car: {
-      type: DataTypes.STRING,
-      allowNull: true,
     }
   },
   {
     // Other model options go here
-    freezeTableName: true
+    freezeTableName: true,
   }
 );
 
-User.sync({ force: true })
-  .then(() => {
-    console.log("Synced user.");
-  })
-  .catch((err) => {
-    console.log("Failed to sync User: " + err.message);
-  });
+// User.sync({ force: true })
+//   .then(() => {
+//     console.log("Synced user entity.");
+//   })
+//   .catch((err) => {
+//     console.log("Failed to sync user entity: " + err.message);
+//   });
+
+// Car.sync({ force: true })
+//   .then(() => {
+//     console.log("Synced car entity.");
+//   })
+//   .catch((err) => {
+//     console.log("Failed to sync car entity: " + err.message);
+//   });
 
 module.exports = User;

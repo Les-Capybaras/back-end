@@ -38,3 +38,22 @@ localhost:8080
 ```sh
 localhost:15672
 ```
+
+# API ROUTES
+
+## User
+
+- [GET] : /api/users *Retreive all users*
+- [PUT] : /api/users/{userId} *Update a user*
+- [DELETE] : /api/users/{userId} *Delete a user*
+
+## Auth
+
+- [POST] : /api/auth/login *Login with credentials*
+- [POST] : /api/auth/register *Register*
+- [GET] : /api/auth/me *Retreive current user information*
+
+## Car
+
+- [CREATE] : /api/cars *Create a car*
+- [GET] : /api/cars *Retreive all cars*
