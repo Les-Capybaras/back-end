@@ -16,7 +16,7 @@ dotenv.config();
 const PORT = process.env.API_PORT || 5000;
 
 // Models
-require("./src/models/sync")();
+require("./src/sync")();
 
 // Routes
 //require("./src/routes")(app);

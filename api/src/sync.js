@@ -1,8 +1,8 @@
 module.exports = () => {
-  const User = require("../models/User");
-  const Car = require("../models/Car");
-  const Trip = require("../models/Trip");
-  const Passenger = require("../models/Passenger");
+  const User = require("./models/User");
+  const Car = require("./models/Car");
+  const Trip = require("./models/Trip");
+  const Passenger = require("./models/Passenger");
 
   User.hasOne(Car);
   Car.belongsTo(User, {
