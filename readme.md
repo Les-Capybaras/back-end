@@ -57,3 +57,8 @@ localhost:15672
 
 - [CREATE] : /api/cars *Create a car*
 - [GET] : /api/cars *Retreive all cars*
+
+## Trips
+
+- [CREATE] : /api/trips *Create a trip*
+- [GET] : /api/trips *Retreive all trips*
