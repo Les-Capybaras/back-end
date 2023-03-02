@@ -3,6 +3,8 @@ module.exports = () => {
   const Car = require("./models/Car");
   const Trip = require("./models/Trip");
   const Passenger = require("./models/Passenger");
+  const City = require("./models/City");
+  const Segment = require("./models/Segment");
 
   User.hasOne(Car);
   Car.belongsTo(User, {
@@ -15,6 +17,22 @@ module.exports = () => {
       foreignKey: 'driver',
       allowNull: true
   });
+  City.hasMany(Segment, {
+    foreignKey: 'startLocation',
+    allowNull: true
+  });
+  City.hasMany(Segment, {
+    foreignKey: 'endLocation',
+    allowNull: true
+  });
+  Segment.belongsTo(City, {
+    foreignKey: 'startLocation',
+  })
+  Segment.belongsTo(City, {
+    foreignKey: 'endLocation',
+  })
+  Segment.belongsTo(Trip);
+  Trip.hasMany(Segment);
   User.hasMany(Passenger); 
   Passenger.belongsTo(User);
   Trip.hasMany(Passenger);
@@ -27,6 +45,8 @@ module.exports = () => {
       await Car.sync({ alter: true });
       await Trip.sync({ alter: true });
       await Passenger.sync({ alter: true });
+      await City.sync({ alter: true });
+      await Segment.sync({ alter: true });
       console.log("[DATABASE] - Synced database.");
     } catch (error) {
       console.error("[DATABASE] - Unable to sync database:", error);
