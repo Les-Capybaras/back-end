@@ -20,7 +20,8 @@ const City = sequelize.define(
   },
   {
     // Other model options go here
-    freezeTableName: true
+    freezeTableName: true,
+    timestamps: false 
   }
 );
 

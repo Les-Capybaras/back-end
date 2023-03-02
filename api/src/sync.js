@@ -5,6 +5,7 @@ module.exports = () => {
   const Passenger = require("./models/Passenger");
   const City = require("./models/City");
   const Segment = require("./models/Segment");
+  const BookedSegments = require("./models/BookedSegments");
 
   User.hasOne(Car);
   Car.belongsTo(User, {
@@ -32,6 +33,8 @@ module.exports = () => {
     foreignKey: 'endLocation',
   })
   Segment.belongsTo(Trip);
+  Passenger.belongsToMany(Segment, { through: 'BookedSegments' });
+  Segment.belongsToMany(Passenger, { through: 'BookedSegments' });
   Trip.hasMany(Segment);
   User.hasMany(Passenger); 
   Passenger.belongsTo(User);
