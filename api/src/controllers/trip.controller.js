@@ -22,8 +22,13 @@ exports.create = (req, res) => {
   const trip = {
     startDate: req.body.startDate,
     seats: req.body.seats,
-    driver: driver
+    price: req.body.price,
+    driver: driver,
   };
+
+  // Create all Location from Req
+
+  // Create All Segments From Locations
 
   // Save User in the database
   Trip.create(trip)

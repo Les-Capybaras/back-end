@@ -17,6 +17,10 @@ const Trip = sequelize.define('Trip', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
+    price : {
+        type: DataTypes.FLOAT,
+        allowNull: false
+    },
     driver: {
         type: DataTypes.INTEGER,
         references: {

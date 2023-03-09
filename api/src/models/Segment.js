@@ -1,6 +1,6 @@
 const sequelize = require("../database");
 const { DataTypes } = require("sequelize");
-const City = require("./City");
+const Location = require("./Location");
 
 const Segment = sequelize.define(
   "Segment",
@@ -9,14 +9,14 @@ const Segment = sequelize.define(
     startLocation: {
         type: DataTypes.INTEGER,
         references: {
-            model: City,
+            model: Location,
             key: 'id'
         }
     },
     endLocation: {
         type: DataTypes.INTEGER,
         references: {
-            model: City,
+            model: Location,
             key: 'id'
         }
     },

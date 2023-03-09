@@ -25,6 +25,7 @@ exports.login = async (req, res) => {
       if (!user) {
         return res.status(400).json({ msg: 'User Does not exist' });
       }
+      console.log(password, user.password);
       // Validate password
       bcrypt.compare(password, user.password)
         .then((isMatch) => {
@@ -33,7 +34,7 @@ exports.login = async (req, res) => {
           jwt.sign(
             { id: user.id },
             process.env.JWT_SECRET,
-            { expiresIn: 3600 },
+            { expiresIn: 14400 },
             (err, token) => {
               if (err) throw err;
               res.json({

@@ -1,22 +1,18 @@
 const sequelize = require("../database");
 const { DataTypes } = require("sequelize");
 
-const City = sequelize.define(
-  "City",
+const Location = sequelize.define(
+  "Location",
   {
     // Model attributes are defined here
     name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    longitude: {
-      type: DataTypes.FLOAT,
+    address: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
-    latitude: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    }
   },
   {
     // Other model options go here
@@ -27,4 +23,4 @@ const City = sequelize.define(
 
 
 
-module.exports = City;
+module.exports = Location;
