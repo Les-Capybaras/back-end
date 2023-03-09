@@ -32,10 +32,14 @@ module.exports = () => {
   Segment.belongsTo(Location, {
     foreignKey: 'endLocation',
   })
-  Segment.belongsTo(Trip);
+  Segment.belongsTo(Trip, {
+    foreignKey: 'tripId',
+  });
   Passenger.belongsToMany(Segment, { through: BookedSegments });
   Segment.belongsToMany(Passenger, { through: BookedSegments });
-  Trip.hasMany(Segment);
+  Trip.hasMany(Segment, {
+    foreignKey: 'tripId',
+  });
   User.hasMany(Passenger); 
   Passenger.belongsTo(User);
   Trip.hasMany(Passenger);

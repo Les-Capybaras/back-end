@@ -1,10 +1,12 @@
 const sequelize = require("../database");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 const Trip = require("../models/Trip");
 const User = require("../models/User");
+const Location = require("../models/Location");
+const Segment = require("../models/Segment");
 
 // Create and Save a new Tutorial
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   // Validate request
   if (!req.body) {
     res.status(400).send({
@@ -12,11 +14,11 @@ exports.create = (req, res) => {
     });
     return;
   }
-
+// TODO Check for errors 
   // Get the creator
-  const token = req.header('Authorization') && req.header('Authorization').split(' ')[1];
+  const token =
+    req.header("Authorization") && req.header("Authorization").split(" ")[1];
   const driver = jwt.verify(token, process.env.JWT_SECRET).id;
-
 
   // Create a Trip
   const trip = {
@@ -26,23 +28,38 @@ exports.create = (req, res) => {
     driver: driver,
   };
 
-  // Create all Location from Req
+  // Save Trip in the database
+  const dbTrip = await Trip.create(trip)
+
+  // Create all Location from Req steps
+  const steps = req.body.steps;
+  steps.sort((a, b) => a.order - b.order);
+
+  const locations = steps.map((step) => {
+    return {
+      name: step.name,
+      address: step.address,
+    };
+  });
+
+  const dbLocations = await Location.bulkCreate(locations);
 
   // Create All Segments From Locations
+  // segment = between 2 locations
+  const segments = dbLocations.map((step, index) => {
+    if (index === 0) return null;
 
-  // Save User in the database
-  Trip.create(trip)
-    .then((data) => {
-      res.send(data);
+    return {
+      startLocation: dbLocations[index - 1].id,
+      endLocation: dbLocations[index].id,
+      tripId: dbTrip.id,
+    };
+  });
+  // Remove null values
+  const newSegments = segments.filter((segment) => segment !== null);
 
-      // Here insert Segment dependecies 
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the Tutorial.",
-      });
-    });
+  const dbSegments = await Segment.bulkCreate(newSegments);
+
 };
 
 // Retrieve all Tutorials from the database.
