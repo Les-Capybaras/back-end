@@ -25,6 +25,8 @@ require("./src/routes/trip.routes")(app);
 require("./src/routes/auth.routes")(app);
 require("./src/routes/car.routes")(app);
 
+// Swagger
+require("./src/swagger")(app);
 
 
 // Test connection to RabbitMQ
