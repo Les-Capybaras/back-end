@@ -1,3 +1,19 @@
+/**
+ * @swagger
+ * tags:
+ *   name: Trips
+ *   description: Trip management
+ * /trips:
+ *   get:
+ *     tags: [Trips]
+ *     summary: Retrieve all trips.
+ *     description: Retrieve all trips from database.
+ *   post:
+ *     tags: [Trips]
+ *     summary: Create a trip.
+ *     description: Create a trip in database.
+ */
+
 module.exports = app => {
     const trips = require("../controllers/trip.controller.js");
   

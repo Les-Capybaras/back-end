@@ -1,3 +1,25 @@
+/**
+ * @swagger
+ * tags:
+ *  name: Auth
+ *  description: User authentication
+ * /auth/me:
+ *   get:
+ *     tags: [Auth]
+ *     summary: Retreive connected user data
+ *     description: Retreive connected user data from database.
+ * /auth/login:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Login a user. 
+ *     description: Login a user.
+ * /auth/register:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Register a user.
+ *     description: Register a user.
+ */
+
 module.exports = app => {
     const users = require("../controllers/user.controller.js");
 

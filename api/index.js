@@ -18,6 +18,10 @@ const PORT = process.env.API_PORT || 5000;
 // Models
 require("./src/sync")();
 
+// Swagger
+require("./src/swagger")(app);
+
+
 // Routes
 //require("./src/routes")(app);
 require("./src/routes/user.routes")(app);
@@ -25,8 +29,6 @@ require("./src/routes/trip.routes")(app);
 require("./src/routes/auth.routes")(app);
 require("./src/routes/car.routes")(app);
 
-// Swagger
-require("./src/swagger")(app);
 
 
 // Test connection to RabbitMQ
