@@ -4,6 +4,7 @@ const Trip = require("../models/Trip");
 const User = require("../models/User");
 const Location = require("../models/Location");
 const Segment = require("../models/Segment");
+let dbTrip, dbSegments, dbLocations = {}
 
 // Create and Save a new Tutorial
 exports.create = async (req, res) => {
@@ -29,7 +30,11 @@ exports.create = async (req, res) => {
   };
 
   // Save Trip in the database
-  const dbTrip = await Trip.create(trip)
+  try {
+      dbTrip = await Trip.create(trip)
+  } catch (error) {
+    console.error("Can't create the trip :" + error);
+  }
 
   // Create all Location from Req steps
   const steps = req.body.steps;
@@ -42,7 +47,11 @@ exports.create = async (req, res) => {
     };
   });
 
-  const dbLocations = await Location.bulkCreate(locations);
+  try {
+    dbLocations = await Location.bulkCreate(locations);
+  } catch (error) {
+    console.error("Can't create the locations :" + error);
+  }
 
   // Create All Segments From Locations
   // segment = between 2 locations
@@ -57,12 +66,15 @@ exports.create = async (req, res) => {
   });
   // Remove null values
   const newSegments = segments.filter((segment) => segment !== null);
-
-  const dbSegments = await Segment.bulkCreate(newSegments);
+  try {
+    dbSegments = await Segment.bulkCreate(newSegments);
+  } catch (error) {
+    console.error("Can't create the segments :" + error);
+  }
 
 };
 
-// Retrieve all Tutorials from the database.
+// Retrieve all Trips from the database.
 exports.findAll = (req, res) => {
   Trip.findAll({ include: User })
     .then((data) => {
