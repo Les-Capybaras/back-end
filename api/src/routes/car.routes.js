@@ -1,3 +1,19 @@
+/**
+ * @swagger
+ * tags:
+ *  name: Cars
+ *  description: Car management
+ * /cars:
+ *   get:
+ *     tags: [Cars]
+ *     summary: Retrieve all cars.
+ *     description: Retrieve all cars from database.
+ *   post:
+ *     tags: [Cars]
+ *     summary: Create a car.
+ *     description: Create a car in database.
+ */
+
 module.exports = app => {
     const cars = require("../controllers/car.controller.js");
 

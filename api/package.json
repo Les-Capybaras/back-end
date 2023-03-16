@@ -20,6 +20,8 @@
     "jsonwebtoken": "^9.0.0",
     "mariadb": "^3.0.2",
     "nodemon": "^2.0.16",
-    "sequelize": "^6.19.2"
+    "sequelize": "^6.19.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^4.6.2"
   }
 }

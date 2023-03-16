@@ -1,3 +1,4 @@
+
 const sequelize = require("../database");
 const User = require("../models/User");
 const bcrypt = require('bcryptjs');
