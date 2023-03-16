@@ -1,24 +1,43 @@
-const sequelize = require("../database");
+const { Op } = require("sequelize");
+const moment = require('moment');
 const jwt = require("jsonwebtoken");
 const Trip = require("../models/Trip");
 const User = require("../models/User");
 const Location = require("../models/Location");
 const Segment = require("../models/Segment");
+const { validationResult } = require("express-validator");
 
 // Create and Save a new Tutorial
 exports.create = async (req, res) => {
-  // Validate request
-  if (!req.body) {
-    res.status(400).send({
-      message: "Content can not be empty!",
-    });
-    return;
+  let { dbTrip, dbLocations, dbSegments } = [];
+
+  // Check for validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
-// TODO Check for errors 
+
   // Get the creator
   const token =
     req.header("Authorization") && req.header("Authorization").split(" ")[1];
   const driver = jwt.verify(token, process.env.JWT_SECRET).id;
+
+  // Check if user has already a trip in the same date
+  const userHasTripInSameDate = await Trip.findOne({
+    where: {
+      driver: driver,
+      startDate: {
+        [Op.between]: [
+          moment(req.body.startDate).startOf("day").toDate(),
+          moment(req.body.startDate).endOf("day").toDate(),
+        ],
+      },
+    },
+  });
+  
+  if (userHasTripInSameDate) {
+    return res.status(400).json({ message: "User already has a trip at the same date" });
+  }
 
   // Create a Trip
   const trip = {
@@ -29,37 +48,56 @@ exports.create = async (req, res) => {
   };
 
   // Save Trip in the database
-  const dbTrip = await Trip.create(trip)
+  try {
+    dbTrip = await Trip.create(trip);
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || "Some error occurred while creating the Trip.",
+    });
+  }
+
+  // Sort steps by order
+  const locations = req.body.steps
+  .sort((a, b) => a.order - b.order)
+  .map(({ name, address }) => ({ name, address }));
 
   // Create all Location from Req steps
-  const steps = req.body.steps;
-  steps.sort((a, b) => a.order - b.order);
+  try {
+    dbLocations = await Location.bulkCreate(locations);
+  } catch (err) {
+    res.status(500).send({
+      message:
+        err.message ||
+        "Some error occurred while creating Locations of the trip.",
+    });
+  }
 
-  const locations = steps.map((step) => {
-    return {
-      name: step.name,
-      address: step.address,
-    };
-  });
-
-  const dbLocations = await Location.bulkCreate(locations);
-
-  // Create All Segments From Locations
+  // Filter out the first location
   // segment = between 2 locations
-  const segments = dbLocations.map((step, index) => {
-    if (index === 0) return null;
+  const newSegments = dbLocations.reduce((segments, step, index) => {
+    if (index === 0) return segments;
 
-    return {
+    segments.push({
       startLocation: dbLocations[index - 1].id,
       endLocation: dbLocations[index].id,
       tripId: dbTrip.id,
-    };
-  });
-  // Remove null values
-  const newSegments = segments.filter((segment) => segment !== null);
+    });
 
-  const dbSegments = await Segment.bulkCreate(newSegments);
+    return segments;
+  }, []);
 
+  // Create All Segments From Locations
+  try {
+    dbSegments = await Segment.bulkCreate(newSegments);
+  } catch (err) {
+    res.status(500).send({
+      message:
+        err.message ||
+        "Some error occurred while creating Segments of the trip.",
+    });
+  }
+
+  res.send({ dbTrip, dbLocations, dbSegments });
 };
 
 // Retrieve all Tutorials from the database.
@@ -71,7 +109,7 @@ exports.findAll = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving tutorials.",
+          err.message || "Some error occurred while retrieving Trips.",
       });
     });
 };

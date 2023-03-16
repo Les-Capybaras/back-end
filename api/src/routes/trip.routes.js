@@ -1,3 +1,6 @@
+const { checkSchema } = require('express-validator');
+const { tripSchema } = require('../schemas/trip-schema');
+
 /**
  * @swagger
  * tags:
@@ -20,7 +23,7 @@ module.exports = app => {
     var router = require("express").Router();
   
     // Create a new Trip
-    router.post("/", trips.create);
+    router.post("/", checkSchema(tripSchema), trips.create);
   
     // Retrieve all Trip
     router.get("/", trips.findAll);
