@@ -1,9 +1,8 @@
-
-const sequelize = require("../database");
 const User = require("../models/User");
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const Car = require("../models/Car");
+const { validationResult } = require("express-validator");
 
 async function hashPassword(password) {
   const salt = await bcrypt.genSalt(10);
@@ -13,65 +12,72 @@ async function hashPassword(password) {
  
 // Login
 exports.login = async (req, res) => {
-  const { email, password } = req.body;
-
-  // Simple validation
-  if (!email || !password) {
-    return res.status(400).json({ msg: 'Please enter all fields' });
+  // Check for validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
 
-  // Check for existing user
-  User.findOne({ where: { email: email } })
-    .then((user) => {
-      if (!user) {
-        return res.status(400).json({ msg: 'User Does not exist' });
-      }
-      // Validate password
-      bcrypt.compare(password, user.password)
-        .then((isMatch) => {
-          if (!isMatch) return res.status(400).json({ msg: 'Invalid credentials' });
+  const { email, password } = req.body;
 
-          jwt.sign(
-            { id: user.id },
-            process.env.JWT_SECRET,
-            { expiresIn: 14400 },
-            (err, token) => {
-              if (err) throw err;
-              res.json({
-                token,
-                user: {
-                  id: user.id,
-                  userName: user.userName,
-                  email: user.email
-                }
-              });
-            }
-          )
-        })
-    })
-}
+  try {
+    // Check for existing user
+    const user = await User.findOne({ where: { email: email } });
+
+    if (!user) {
+      return res.status(400).json({ msg: "User Does not exist" });
+    }
+
+    // Check for password match
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({ msg: "Invalid credentials" });
+    }
+
+    // Create and assign a token
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: 14400,
+    });
+    
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        userName: user.userName,
+        email: user.email,
+      },
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+};
 
 // Create and Save a new User
 exports.create = async (req, res) => {
+  // Check for validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
 
-  // Create a User
+  // Create a User object
   const user = {
     userName: req.body.userName,
     email: req.body.email,
     password: await hashPassword(req.body.password),
   };
 
-  // Save User in the database
-  User.create(user)
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the user.",
-      });
-    });
+  try {
+    const dbUser = await User.create(user);
+    return res.status(201).json(dbUser);
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ error: "Some error occurred while creating the user." });
+  }
 };
 
 // Retrieve all users from the database.
@@ -79,7 +85,7 @@ exports.findAll = (req, res) => {
   User.findAll({ include: Car })
     .then((data) => {
       let users = [];
-      data.forEach(user => {
+      data.forEach((user) => {
         let { password, ...userWithoutPassword } = user.dataValues;
         users.push(userWithoutPassword);
       });
@@ -87,8 +93,7 @@ exports.findAll = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving users.",
+        message: err.message || "Some error occurred while retrieving users.",
       });
     });
 };
