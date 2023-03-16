@@ -9,7 +9,7 @@ async function hashPassword(password) {
   const encryptedPassword = await bcrypt.hash(password, salt);
   return encryptedPassword;
 }
-
+ 
 // Login
 exports.login = async (req, res) => {
   // Check for validation errors

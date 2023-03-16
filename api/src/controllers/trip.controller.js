@@ -100,7 +100,7 @@ exports.create = async (req, res) => {
   res.send({ dbTrip, dbLocations, dbSegments });
 };
 
-// Retrieve all Tutorials from the database.
+// Retrieve all Trips from the database.
 exports.findAll = (req, res) => {
   Trip.findAll({ include: User })
     .then((data) => {

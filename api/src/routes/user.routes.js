@@ -1,6 +1,30 @@
 /**
  * @swagger
- * tags:
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       required:
+ *         - email
+ *         - password
+ *       properties:
+ *         username:
+ *           type: string
+ *         email:
+ *           type: string
+ *         password:
+ *           type: string
+ *         password2:
+ *           type: string
+ *       example:
+ *         username: Test
+ *         email: test@test.com
+ *         password: changeme
+ */
+
+/**
+ * @swagger
+ * tags: 
  *  name: Users
  *  description: User management and login
  * /users:
@@ -8,6 +32,13 @@
  *     tags: [Users]
  *     summary: Retrieve all users.
  *     description: Retrieve all users from database.
+ *     responses:
+ *       200:
+ *         description: All of the users.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
  * /:id:
  *   put:
  *     tags: [Users]
