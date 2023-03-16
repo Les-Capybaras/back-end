@@ -114,11 +114,73 @@ exports.findAll = (req, res) => {
     });
 };
 
-// // Find a single Tutorial with an id
-// exports.findOne = (req, res) => {};
+// Find a single Trip with an id
+exports.findOne = (req, res) => {
+  const tripId = req.params.id;
+
+  Trip.findByPk(tripId, {
+    include: [
+      { 
+        model: Segment,
+        include: [
+          { model: Location, as: 'start' },
+          { model: Location, as: 'end' }
+        ]
+      },
+    ],
+  })
+    .then((data) => {
+      if (!data) {
+        return res.status(404).send({
+          message: `Trip with id ${tripId} was not found.`,
+        });
+      }
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || `Some error occurred while retrieving trip with id ${tripId}.`,
+      });
+    });
+};
 
 // // Update a Tutorial by the id in the request
 // exports.update = (req, res) => {};
 
 // // Delete a Tutorial with the specified id in the request
 // exports.delete = (req, res) => {};
+
+
+exports.search = async (req, res) => {
+  const { startLocation, endLocation, startDate } = req.body;
+
+  const trips = await Trip.findAll({
+    include: [
+      {
+        model: Segment,
+        as: "segments",
+        where: {
+          startLocation: startLocation,
+          endLocation: endLocation,
+        },
+        include: [
+          {
+            model: Location,
+            as: "startLocation",
+          },
+          {
+            model: Location,
+            as: "endLocation",
+          },
+        ],
+      },
+      {
+        model: User,
+        as: "driver",
+      },
+    ],
+  });
+
+  res.send(trips);
+};
