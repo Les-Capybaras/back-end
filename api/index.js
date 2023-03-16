@@ -28,6 +28,7 @@ require("./src/routes/user.routes")(app);
 require("./src/routes/trip.routes")(app);
 require("./src/routes/auth.routes")(app);
 require("./src/routes/car.routes")(app);
+require("./src/routes/segments.routes")(app);
 
 
 

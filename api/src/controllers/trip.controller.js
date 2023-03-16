@@ -6,7 +6,7 @@ const Location = require("../models/Location");
 const Segment = require("../models/Segment");
 let dbTrip, dbSegments, dbLocations = {}
 
-// Create and Save a new Tutorial
+// Create and Save a new Trips
 exports.create = async (req, res) => {
   // Validate request
   if (!req.body) {
@@ -36,6 +36,8 @@ exports.create = async (req, res) => {
     console.error("Can't create the trip :" + error);
   }
 
+  console.log(dbTrip);
+
   // Create all Location from Req steps
   const steps = req.body.steps;
   steps.sort((a, b) => a.order - b.order);
@@ -44,6 +46,8 @@ exports.create = async (req, res) => {
     return {
       name: step.name,
       address: step.address,
+      longitude: step.longitude,
+      latitude: step.latitude,
     };
   });
 
@@ -72,6 +76,7 @@ exports.create = async (req, res) => {
     console.error("Can't create the segments :" + error);
   }
 
+  res.send(dbTrip)
 };
 
 // Retrieve all Trips from the database.
@@ -83,7 +88,7 @@ exports.findAll = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving tutorials.",
+          err.message || "Some error occurred while retrieving trips.",
       });
     });
 };

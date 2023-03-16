@@ -42,8 +42,6 @@ module.exports = () => {
   });
   User.hasMany(Passenger); 
   Passenger.belongsTo(User);
-  Trip.hasMany(Passenger);
-  Passenger.belongsTo(Trip);
 
   const syncDatabase = async () => {
     try {
@@ -54,6 +52,7 @@ module.exports = () => {
       await Passenger.sync({ alter: true });
       await Location.sync({ alter: true });
       await Segment.sync({ alter: true });
+      await BookedSegments.sync({ alter: true})
       console.log("[DATABASE] - Synced database.");
     } catch (error) {
       console.error("[DATABASE] - Unable to sync database:", error);
