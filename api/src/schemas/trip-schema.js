@@ -53,6 +53,26 @@ const tripSchema = {
   },
 };
 
+const searchSchema = {
+  startLocation: {
+    notEmpty: true,
+    errorMessage: "Start location is required",
+    isString: true,
+  },
+  endLocation: {
+    notEmpty: true,
+    errorMessage: "End location is required",
+    isString: true,
+  },
+  startDate: {
+    notEmpty: true,
+    errorMessage: "Start date is required and must be a string",
+    isString: true,
+  },
+};
+
+
 module.exports = {
   tripSchema,
+  searchSchema
 };

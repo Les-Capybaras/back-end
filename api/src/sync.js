@@ -12,11 +12,13 @@ module.exports = () => {
     allowNull: true,
   });
   Trip.belongsTo(User, {
-    foreignKey: "driver",
+    foreignKey: "driverId",
+    as: "driver",
   });
   User.hasMany(Trip, {
-    foreignKey: "driver",
+    foreignKey: "driverId",
     allowNull: true,
+    as: "driver",
   });
   Location.hasMany(Segment, {
     foreignKey: "startLocation",
@@ -43,6 +45,7 @@ module.exports = () => {
   Segment.belongsToMany(Passenger, { through: BookedSegments });
   Trip.hasMany(Segment, {
     foreignKey: "tripId",
+    as: "segments",
   });
   User.hasMany(Passenger);
   Passenger.belongsTo(User);
