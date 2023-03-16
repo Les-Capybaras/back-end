@@ -21,8 +21,8 @@ module.exports = app => {
   
     var router = require("express").Router();
 
-    // Retrieve all Cars
-    router.get("/", isAuth, segment.findAll);
+    // Retrieve all Segments
+    router.get("/:id", isAuth, segment.findOne);
 
     app.use('/api/segments', router);
   };

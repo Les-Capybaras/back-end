@@ -6,6 +6,10 @@ const Trip = require("./Trip");
 const Segment = sequelize.define(
   "Segment",
   {
+    price: {
+      type: DataTypes.FLOAT,
+      allowNull: true,
+    },
     // Model attributes are defined here
     startLocation: {
       type: DataTypes.INTEGER,
