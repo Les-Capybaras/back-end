@@ -1,3 +1,7 @@
+const { checkSchema } = require('express-validator');
+const { createSchema, loginSchema } = require('../schemas/user-schema');
+
+
 /**
  * @swagger
  * tags:
@@ -28,10 +32,10 @@ module.exports = app => {
     var router = require("express").Router();
 
     // Login
-    router.post("/login", users.login);
+    router.post("/login", checkSchema(loginSchema), users.login);
 
     // Create a new User
-    router.post("/register", users.create);
+    router.post("/register", checkSchema(createSchema), users.create);
 
     // Retrieve a user
     router.get('/me', isAuth, users.findOne);
