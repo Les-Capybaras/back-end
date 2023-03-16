@@ -10,37 +10,41 @@ module.exports = () => {
   User.hasOne(Car);
   Car.belongsTo(User, {
     allowNull: true,
-  })
+  });
   Trip.belongsTo(User, {
-    foreignKey: 'driver',
-  })
+    foreignKey: "driver",
+  });
   User.hasMany(Trip, {
-      foreignKey: 'driver',
-      allowNull: true
+    foreignKey: "driver",
+    allowNull: true,
   });
   Location.hasMany(Segment, {
-    foreignKey: 'startLocation',
-    allowNull: true
+    foreignKey: "startLocation",
+    allowNull: true,
+    as: "start",
   });
   Location.hasMany(Segment, {
-    foreignKey: 'endLocation',
-    allowNull: true
+    foreignKey: "endLocation",
+    allowNull: true,
+    as: "end",
   });
   Segment.belongsTo(Location, {
-    foreignKey: 'startLocation',
-  })
+    foreignKey: "startLocation",
+    as: "start",
+  });
   Segment.belongsTo(Location, {
-    foreignKey: 'endLocation',
-  })
+    foreignKey: "endLocation",
+    as: "end",
+  });
   Segment.belongsTo(Trip, {
-    foreignKey: 'tripId',
-  }); 
+    foreignKey: "tripId",
+  });
   Passenger.belongsToMany(Segment, { through: BookedSegments });
   Segment.belongsToMany(Passenger, { through: BookedSegments });
   Trip.hasMany(Segment, {
-    foreignKey: 'tripId',
+    foreignKey: "tripId",
   });
-  User.hasMany(Passenger); 
+  User.hasMany(Passenger);
   Passenger.belongsTo(User);
 
   const syncDatabase = async () => {

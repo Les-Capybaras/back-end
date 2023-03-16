@@ -1,3 +1,6 @@
+const { checkSchema } = require('express-validator');
+const { tripSchema } = require('../schemas/trip-schema');
+
 /**
  * @swagger
  * components:
@@ -75,19 +78,22 @@ module.exports = app => {
     var router = require("express").Router();
   
     // Create a new Trip
-    router.post("/", trips.create);
+    router.post("/", checkSchema(tripSchema), trips.create);
   
     // Retrieve all Trip
     router.get("/", trips.findAll);
   
     // Retrieve a single Trip with id
-    // router.get("/:id", trips.findOne);
+    router.get("/:id", trips.findOne);
   
     // Update a Trip with id
     // router.put("/:id", trips.update);
   
     // Delete a Trip with id
     // router.delete("/:id", trips.delete);
+
+    // Retreive a trip with start location, end location and date
+    router.get("/search", trips.search);
   
     app.use('/api/trips', router);
   };
