@@ -21,7 +21,7 @@ const Trip = sequelize.define('Trip', {
         type: DataTypes.FLOAT,
         allowNull: false
     },
-    driver: {
+    driverId: {
         type: DataTypes.INTEGER,
         references: {
             model: User,

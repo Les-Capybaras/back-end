@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const moment = require('moment');
+const moment = require("moment");
 const jwt = require("jsonwebtoken");
 const Trip = require("../models/Trip");
 const User = require("../models/User");
@@ -25,7 +25,7 @@ exports.create = async (req, res) => {
   // Check if user has already a trip in the same date
   const userHasTripInSameDate = await Trip.findOne({
     where: {
-      driver: driver,
+      driverId: driver,
       startDate: {
         [Op.between]: [
           moment(req.body.startDate).startOf("day").toDate(),
@@ -34,9 +34,11 @@ exports.create = async (req, res) => {
       },
     },
   });
-  
+
   if (userHasTripInSameDate) {
-    return res.status(400).json({ message: "User already has a trip at the same date" });
+    return res
+      .status(400)
+      .json({ message: "User already has a trip at the same date" });
   }
 
   // Create a Trip
@@ -44,7 +46,7 @@ exports.create = async (req, res) => {
     startDate: req.body.startDate,
     seats: req.body.seats,
     price: req.body.price,
-    driver: driver,
+    driverId: driver,
   };
 
   // Save Trip in the database
@@ -106,14 +108,30 @@ exports.create = async (req, res) => {
 
 // Retrieve all Trips from the database.
 exports.findAll = (req, res) => {
-  Trip.findAll({ include: User })
+  Trip.findAll({
+    include: [
+      {
+        model: User,
+        as: "driver",
+        attributes: { exclude: ["createdAt", "updatedAt"] },
+      },
+      {
+        model: Segment,
+        as: "segments",
+        attributes: { exclude: ["startLocation", "endLocation", "tripId"] },
+        include: [
+          { model: Location, as: "start" },
+          { model: Location, as: "end" },
+        ],
+      },
+    ],
+  })
     .then((data) => {
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving Trips.",
+        message: err.message || "Some error occurred while retrieving Trips.",
       });
     });
 };
@@ -124,12 +142,13 @@ exports.findOne = (req, res) => {
 
   Trip.findByPk(tripId, {
     include: [
-      { 
+      {
         model: Segment,
+        attributes: { exclude: ["startLocation", "endLocation", "tripId"] },
         include: [
-          { model: Location, as: 'start' },
-          { model: Location, as: 'end' }
-        ]
+          { model: Location, as: "start" },
+          { model: Location, as: "end" },
+        ],
       },
     ],
   })
@@ -144,7 +163,8 @@ exports.findOne = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || `Some error occurred while retrieving trip with id ${tripId}.`,
+          err.message ||
+          `Some error occurred while retrieving trip with id ${tripId}.`,
       });
     });
 };
@@ -155,38 +175,120 @@ exports.findOne = (req, res) => {
 // // Delete a Tutorial with the specified id in the request
 // exports.delete = (req, res) => {};
 
-
+// Find all published Trips/Segments by startLocation, endLocation and startDate
 exports.search = async (req, res) => {
+
+  // TODO : Check if available seats
+  // TODO : return seatsAvailable
+
+  // Check for validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   const { startLocation, endLocation, startDate } = req.body;
 
-  const trips = await Trip.findAll({
-    include: [
-      {
-        model: Segment,
-        as: "segments",
-        where: {
-          startLocation: startLocation,
-          endLocation: endLocation,
+  let { startSegments, stopSegments, trips } = [];
+
+  // Find Segments where startLocation are similar to req.
+  try {
+    startSegments = await Segment.findAll({
+      where: {
+        "$start.name$": {
+          [Op.eq]: startLocation,
         },
-        include: [
-          {
-            model: Location,
-            as: "startLocation",
-          },
-          {
-            model: Location,
-            as: "endLocation",
-          },
-        ],
       },
-      {
-        model: User,
-        as: "driver",
+      include: [
+        {
+          model: Location,
+          as: "start",
+        },
+        {
+          model: Location,
+          as: "end",
+        },
+      ],
+      attributes: { exclude: ["startLocation", "endLocation"] },
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || "Some error occurred while retrieving Trips.",
+    });
+  }
+
+  // Find Segments where endLocation are similar to req.
+  try {
+    stopSegments = await Segment.findAll({
+      where: {
+        "$end.name$": {
+          [Op.eq]: endLocation,
+        },
       },
-    ],
+      include: [
+        {
+          model: Location,
+          as: "start",
+        },
+        {
+          model: Location,
+          as: "end",
+        },
+      ],
+      attributes: { exclude: ["startLocation", "endLocation"] },
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || "Some error occurred while retrieving Trips.",
+    });
+  }
+
+  // Find Trips where startDate are similar to req.
+  try {
+    trips = await Trip.findAll({
+      attributes: { exclude: ["updatedAt", "driverId"] },
+      where: {
+        startDate: {
+          [Op.gte]: moment(startDate).startOf("day").toDate(),
+          [Op.lte]: moment(startDate).endOf("day").toDate(),
+        },
+      },
+      include: [
+        {
+          model: User,
+          as: "driver",
+          attributes: { exclude: ["createdAt", "updatedAt", "password"] },
+        },
+        {
+          model: Segment,
+          as: "segments",
+          attributes: { exclude: ["startLocation", "endLocation", "tripId"] },
+          include: [
+            { model: Location, as: "start" },
+            { model: Location, as: "end" },
+          ],
+          order: [["id", "ASC"]],
+        },
+      ],
+      order: [["startDate", "ASC"]],
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || "Some error occurred while retrieving Trips.",
+    });
+  }
+
+  const potentialTrips = trips.filter((trip) => {
+    const startSegment = startSegments.find(
+      (segment) => segment.id === trip.segments[0].id
+    );
+    const stopSegment = stopSegments.find(
+      (segment) => segment.id === trip.segments[trip.segments.length - 1].id
+    );
+    return startSegment && stopSegment;
   });
 
-  res.send(trips);
+  res.status(200).send(potentialTrips);
 };
 
 function getSegmentPrice(firstStart, lastEnd, segmentStart, segmentEnd, trip) {
