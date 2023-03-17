@@ -67,6 +67,7 @@ exports.create = async (req, res) => {
     userName: req.body.userName,
     email: req.body.email,
     password: await hashPassword(req.body.password),
+    age: req.body.age,
   };
 
   try {

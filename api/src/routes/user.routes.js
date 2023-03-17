@@ -16,10 +16,13 @@
  *           type: string
  *         password2:
  *           type: string
+ *         age:
+ *           type: integer
  *       example:
  *         username: Test
  *         email: test@test.com
  *         password: changeme
+ *         age: 22
  */
 
 /**

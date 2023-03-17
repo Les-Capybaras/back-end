@@ -23,6 +23,10 @@ createSchema = {
     notEmpty: true,
     errorMessage: "Password confirmation is required",
   },
+  age: {
+    notEmpty: true,
+    errorMessage: "Age is required",
+  },
 };
 
 loginSchema = {

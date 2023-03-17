@@ -50,16 +50,17 @@ exports.create = async (req, res) => {
   // Save Trip in the database
   try {
     dbTrip = await Trip.create(trip);
+    console.log(dbTrip);
   } catch (err) {
     res.status(500).send({
       message: err.message || "Some error occurred while creating the Trip.",
     });
   }
 
-  // Sort steps by order
+  // Sort steps by order 
   const locations = req.body.steps
   .sort((a, b) => a.order - b.order)
-  .map(({ name, address }) => ({ name, address }));
+  .map(({ name, address, longitude, latitude }) => ({ name, address, longitude, latitude }));
 
   // Create all Location from Req steps
   try {
@@ -76,18 +77,21 @@ exports.create = async (req, res) => {
   // segment = between 2 locations
   const newSegments = dbLocations.reduce((segments, step, index) => {
     if (index === 0) return segments;
+    const price = getSegmentPrice(dbLocations[0], dbLocations[dbLocations.length - 1], dbLocations[index - 1], dbLocations[index], trip)
 
-    segments.push({
+    let segment = {
+      price: price,
       startLocation: dbLocations[index - 1].id,
       endLocation: dbLocations[index].id,
       tripId: dbTrip.id,
-    });
+    }
 
+    segments.push(segment)
     return segments;
   }, []);
 
   // Create All Segments From Locations
-  try {
+  try { 
     dbSegments = await Segment.bulkCreate(newSegments);
   } catch (err) {
     res.status(500).send({
@@ -185,30 +189,21 @@ exports.search = async (req, res) => {
   res.send(trips);
 };
 
-async function getSegmentPrice() {
-    const trip = await Trip.findByPk(segment.tripId);
-    const allSegmentsOfTrip = await Segment.findAll({
-      where: { tripId: segment.tripId },
-    });
-    const firstSegment = allSegmentsOfTrip[0];
-    const lastSegment = allSegmentsOfTrip[allSegmentsOfTrip.length - 1];
-
-    const firstLocation = await Location.findByPk(firstSegment.startLocation);
-    const endLocation = await Location.findByPk(lastSegment.endLocation);
-
+function getSegmentPrice(firstStart, lastEnd, segmentStart, segmentEnd, trip) {
     const totalDistance = getDistanceFromLatLonInKm(
-      firstLocation.longitude,
-      firstLocation.latitude,
-      endLocation.longitude,
-      endLocation.latitude
+      firstStart.longitude,
+      firstStart.latitude,
+      lastEnd.longitude,
+      lastEnd.latitude
     );
     const segmentDistance = getDistanceFromLatLonInKm(
-      segment.start.longitude,
-      segment.start.latitude,
-      segment.end.longitude,
-      segment.end.latitude
+      segmentStart.longitude,
+      segmentStart.latitude,
+      segmentEnd.longitude,
+      segmentEnd.latitude
     );
-    segment.price = Math.round((segmentDistance * trip.price / totalDistance) * 100) / 100;
+    console.log(segmentDistance, trip.price, totalDistance);
+    return Math.round((segmentDistance * trip.price / totalDistance) * 100) / 100;
 }
 
 // Compute distance between two points on Earth given their latitudes and longitudes
