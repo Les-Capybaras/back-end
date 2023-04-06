@@ -5,9 +5,9 @@ const sequelize = require('../database')
 const Trip = sequelize.define('Trip', {
     state: {
         type: DataTypes.ENUM,
-        values: ['En attente', 'En cours', 'Terminé'],
+        values: ['soon', 'pending', 'finished'],
         allowNull: false,
-        defaultValue: 'En attente'
+        defaultValue: 'soon'
     },
     startDate: {
         type: DataTypes.DATE,

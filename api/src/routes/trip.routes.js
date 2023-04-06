@@ -194,6 +194,13 @@ module.exports = app => {
 
     // Retreive a trip with start location, end location and date
     router.post("/search", checkSchema(searchSchema), trips.search);
-  
+
+    // Request to join a trip as a passenger
+    router.post("/:id/request", trips.request);
+
+    // Accept a passenger request
+    router.post("/response", trips.accept);
+
+
     app.use('/api/trips', router);
   };

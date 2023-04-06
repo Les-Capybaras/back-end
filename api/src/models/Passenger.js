@@ -4,9 +4,9 @@ const sequelize = require('../database')
 const Passenger = sequelize.define('Passenger', {
     state: {
         type: DataTypes.ENUM,
-        values: ['En attente', 'Accepté'],
+        values: ['pending', 'validated', 'rejected'],
         allowNull: false,
-        defaultValue: 'En attente'
+        defaultValue: 'pending'
     }
 }, { freezeTableName: true });
 

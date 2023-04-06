@@ -5,6 +5,8 @@ const Trip = require("../models/Trip");
 const User = require("../models/User");
 const Location = require("../models/Location");
 const Segment = require("../models/Segment");
+const RequestSegments = require("../models/RequestSegments");
+const Request = require("../models/Request");
 const { validationResult } = require("express-validator");
 
 // Create and Save a new Trips
@@ -58,10 +60,15 @@ exports.create = async (req, res) => {
     });
   }
 
-  // Sort steps by order 
+  // Sort steps by order
   const locations = req.body.steps
-  .sort((a, b) => a.order - b.order)
-  .map(({ name, address, longitude, latitude }) => ({ name, address, longitude, latitude }));
+    .sort((a, b) => a.order - b.order)
+    .map(({ name, address, longitude, latitude }) => ({
+      name,
+      address,
+      longitude,
+      latitude,
+    }));
 
   // Create all Location from Req steps
   try {
@@ -78,7 +85,13 @@ exports.create = async (req, res) => {
   // segment = between 2 locations
   const newSegments = dbLocations.reduce((segments, step, index) => {
     if (index === 0) return segments;
-    const price = getSegmentPrice(dbLocations[0], dbLocations[dbLocations.length - 1], dbLocations[index - 1], dbLocations[index], trip)
+    const price = getSegmentPrice(
+      dbLocations[0],
+      dbLocations[dbLocations.length - 1],
+      dbLocations[index - 1],
+      dbLocations[index],
+      trip
+    );
 
     let segment = {
       price: price,
@@ -86,14 +99,14 @@ exports.create = async (req, res) => {
       startLocation: dbLocations[index - 1].id,
       endLocation: dbLocations[index].id,
       tripId: dbTrip.id,
-    }
+    };
 
-    segments.push(segment)
+    segments.push(segment);
     return segments;
   }, []);
 
   // Create All Segments From Locations
-  try { 
+  try {
     dbSegments = await Segment.bulkCreate(newSegments);
   } catch (err) {
     res.status(500).send({
@@ -144,6 +157,7 @@ exports.findOne = (req, res) => {
     include: [
       {
         model: Segment,
+        as: "segments",
         attributes: { exclude: ["startLocation", "endLocation", "tripId"] },
         include: [
           { model: Location, as: "start" },
@@ -177,7 +191,6 @@ exports.findOne = (req, res) => {
 
 // Find all published Trips/Segments by startLocation, endLocation and startDate
 exports.search = async (req, res) => {
-
   // TODO : Check if available seats
   // TODO : return seatsAvailable
 
@@ -307,16 +320,145 @@ function getSegmentPrice(firstStart, lastEnd, segmentStart, segmentEnd, trip) {
     return Math.round((segmentDistance * trip.price / totalDistance) * 100) / 100;
 }
 
+exports.request = async (req, res) => {
+  const tripId = req.params.id;
+
+  const { segmentIds } = req.body;
+
+  // Check for validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  // Get the current user
+  const token =
+    req.header("Authorization") && req.header("Authorization").split(" ")[1];
+  const driver = jwt.verify(token, process.env.JWT_SECRET).id;
+
+  // Check if trip exists
+  let trip = {};
+  try {
+    trip = await Trip.findByPk(tripId);
+  } catch (err) {
+    return res.status(500).send({
+      message:
+        err.message ||
+        `Some error occurred while retrieving trip with id ${tripId}.`,
+    });
+  }
+
+  // Check if seats are available by segment
+
+  // Retreive booked segments requested by user
+  // const requestedSegments = [];
+  // try {
+  //   requestedSegments = await RequestSegments.findAll({
+  //     where: {
+  //       id: {
+  //         [Op.in]: segmentIds,
+  //       },
+  //     },
+  //   });
+  // } catch (error) {
+  //   return res.status(500).send({
+  //     message: err.message || `Some error occurred while retrieving segments.`,
+  //   });
+  // }
+
+  // const seatsAvailable = segments.reduce((acc, segment) => {
+  //   return acc && segment.seatsAvailable > 0;
+  // }, true);
+
+  // if (!seatsAvailable) {
+  //   return res.status(400).send({
+  //     message: `Not enough seats available.`,
+  //   });
+  // }
+
+  // Check if user is the driver
+  if (trip.driverId === driver) {
+    return res.status(400).send({
+      message: `You are the driver of this trip.`,
+    });
+  }
+
+  let existingUserTrips = [];
+  // Check if user is already in a trip
+  try {
+    existingUserTrips = await Request.findAll({
+      where: {
+        userId: driver,
+      },
+      include: [
+        {
+          model: Trip,
+          as: "trip",
+        },
+      ],
+    });
+
+    if (existingUserTrips.length > 0) {
+      const activeTrips = existingUserTrips.filter(
+        (trip) => trip.status === "accepted"
+      );
+      if (activeTrips.length > 0) {
+        return res.status(400).send({
+          message: `You are already in a trip.`,
+        });
+      }
+    }
+  } catch (err) {
+    return res.status(500).send({
+      message: err.message || `Some error occurred while retrieving request.`,
+    });
+  }
+
+  // Create the request
+  let request = {};
+  try {
+    request = await Request.create({
+      userId: driver,
+      tripId,
+    });
+
+    const requestSegments = await RequestSegments.bulkCreate(
+      segmentIds.map((segmentId) => ({
+        RequestId: request.id,
+        SegmentId: segmentId,
+      }))
+    )
+
+  } catch (err) {
+    return res.status(500).send({
+      message: err.message || `Some error occurred while creating request.`,
+    });
+  }
+
+  // Send the request
+  res.status(201).send(request);
+};
+
+exports.accept = async (req, res) => {
+  
+};
+
+exports.deny = async (req, res) => {
+  return 1;
+};
+
 // Compute distance between two points on Earth given their latitudes and longitudes
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
   const R = 6371; // Radius of the earth in km
   const dLat = deg2rad(lat2 - lat1); // deg2rad below
   const dLon = deg2rad(lon2 - lon1);
-  const a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2); 
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(lat1)) *
+      Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const distance = R * c; // Distance in km
   return distance;
 }

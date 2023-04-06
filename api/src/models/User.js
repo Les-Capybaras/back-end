@@ -20,12 +20,12 @@ const User = sequelize.define(
     },
     age: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: true,
     },
     picture: {
       type: DataTypes.STRING,
-      allowNull: true
-    }
+      allowNull: true,
+    },
   },
   {
     // Other model options go here
