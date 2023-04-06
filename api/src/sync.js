@@ -2,29 +2,11 @@ module.exports = () => {
   const User = require("./models/User");
   const Car = require("./models/Car");
   const Trip = require("./models/Trip");
-  const Passenger = require("./models/Passenger");
   const Location = require("./models/Location");
   const Segment = require("./models/Segment");
-  const BookedSegments = require("./models/BookedSegments");
   const Request = require("./models/Request");
-  const RequestSegments = require("./models/RequestSegments");
+  const RequestSegments = require("./models/RequestSegment");
 
-  Request.belongsTo(User, {
-    foreignKey: "userId",
-    allowNull: false,
-    as: "user",
-  });
-  Request.belongsTo(Trip, {
-    foreignKey: "tripId",
-    allowNull: false,
-    as: "trip",
-  });
-  Request.belongsToMany(Segment, {
-    through: RequestSegments,
-  });
-  Segment.belongsToMany(Request, {
-    through: RequestSegments,
-  });
   User.hasOne(Car);
   Car.belongsTo(User, {
     allowNull: true,
@@ -59,14 +41,26 @@ module.exports = () => {
   Segment.belongsTo(Trip, {
     foreignKey: "tripId",
   });
-  Passenger.belongsToMany(Segment, { through: BookedSegments });
-  Segment.belongsToMany(Passenger, { through: BookedSegments });
   Trip.hasMany(Segment, {
     foreignKey: "tripId",
     as: "segments",
   });
-  User.hasMany(Passenger);
-  Passenger.belongsTo(User);
+  Request.belongsTo(User, {
+    foreignKey: "userId",
+    allowNull: false,
+    as: "user",
+  });
+  Request.belongsTo(Trip, {
+    foreignKey: "tripId",
+    allowNull: false,
+    as: "trip",
+  });
+  Request.belongsToMany(Segment, {
+    through: RequestSegments,
+  });
+  Segment.belongsToMany(Request, {
+    through: RequestSegments,
+  });
 
   const syncDatabase = async () => {
     try {
@@ -74,10 +68,8 @@ module.exports = () => {
       await User.sync({ alter: true });
       await Car.sync({ alter: true });
       await Trip.sync({ alter: true });
-      await Passenger.sync({ alter: true });
       await Location.sync({ alter: true });
       await Segment.sync({ alter: true });
-      await BookedSegments.sync({ alter: true });
       await Request.sync({ alter: true });
       await RequestSegments.sync({ alter: true });
       console.log("[DATABASE] - Synced database.");

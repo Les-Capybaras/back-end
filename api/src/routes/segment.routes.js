@@ -17,7 +17,7 @@
 module.exports = app => {
     const segment = require("../controllers/segment.controller.js");
 
-    const { isAuth } = require("../middlewares/auth");
+    const { isAuth } = require("../middlewares/auth.js");
   
     var router = require("express").Router();
 

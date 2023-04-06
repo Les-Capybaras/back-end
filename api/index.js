@@ -27,7 +27,8 @@ require("./src/routes/user.routes")(app);
 require("./src/routes/trip.routes")(app);
 require("./src/routes/auth.routes")(app);
 require("./src/routes/car.routes")(app);
-require("./src/routes/segments.routes")(app);
+require("./src/routes/segment.routes")(app);
+require("./src/routes/request.routes")(app);
 
 // Start server
 app.listen(PORT, () => {
