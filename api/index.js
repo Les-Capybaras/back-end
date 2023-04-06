@@ -3,7 +3,6 @@ const dotenv = require("dotenv");
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const amqplib = require("amqplib/callback_api");
 
 // Express App
 const app = express();
@@ -29,14 +28,6 @@ require("./src/routes/trip.routes")(app);
 require("./src/routes/auth.routes")(app);
 require("./src/routes/car.routes")(app);
 require("./src/routes/segments.routes")(app);
-
-
-
-// Test connection to RabbitMQ
-// amqplib.connect("amqp://host.docker.internal:5672", (err, conn) => {
-//   if (err) throw err;
-//   if (conn) console.log("Success connection to Amqp");
-// });
 
 // Start server
 app.listen(PORT, () => {

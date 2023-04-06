@@ -14,6 +14,7 @@ services:
       - 8080:8080
   api:
     build: ./api
+    restart: always
     env_file:
       - api/.env
     volumes:
@@ -22,7 +23,6 @@ services:
     links:
       - database
     depends_on:
-      - rabbitmq
       - database
   nginx:
     restart: always
@@ -32,14 +32,5 @@ services:
     depends_on:
       - api
       - database
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq
-    hostname: rabbitmq
-    environment:
-      - AMQP_HOST='host.docker.internal'
-    ports:
-      - 5672:5672
-      - 15672:15672
 volumes:
   dbdata:
