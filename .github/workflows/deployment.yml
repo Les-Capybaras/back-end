@@ -22,7 +22,7 @@ jobs:
         docker-compose build
         
     - name: Copy Docker images to Droplet
-      uses: appleboy/scp-action@v1
+      uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.DROPLET_IP }}
         username: ${{ secrets.DROPLET_USERNAME }}
