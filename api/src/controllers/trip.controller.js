@@ -8,6 +8,7 @@ const Segment = require("../models/Segment");
 const RequestSegments = require("../models/RequestSegments");
 const Request = require("../models/Request");
 const { validationResult } = require("express-validator");
+import { getDistanceFromLatLonInKm } from "../utils/distances";
 
 // Create and Save a new Trips
 exports.create = async (req, res) => {
@@ -446,24 +447,3 @@ exports.accept = async (req, res) => {
 exports.deny = async (req, res) => {
   return 1;
 };
-
-// Compute distance between two points on Earth given their latitudes and longitudes
-function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-  const R = 6371; // Radius of the earth in km
-  const dLat = deg2rad(lat2 - lat1); // deg2rad below
-  const dLon = deg2rad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(deg2rad(lat1)) *
-      Math.cos(deg2rad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distance = R * c; // Distance in km
-  return distance;
-}
-
-// Convert degrees to radians
-function deg2rad(deg) {
-  return deg * (Math.PI / 180);
-}

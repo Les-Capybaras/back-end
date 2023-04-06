@@ -1,0 +1,44 @@
+name: Deploy to DigitalOcean Droplet
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Install dependencies
+      run: |
+        sudo apt-get update && sudo apt-get -y install docker-compose sshpass
+        
+    - name: Build Docker images
+      run: |
+        docker-compose build
+        
+    - name: Copy Docker images to Droplet
+      uses: appleboy/scp-action@v1
+      with:
+        host: ${{ secrets.DROPLET_IP }}
+        username: ${{ secrets.DROPLET_USERNAME }}
+        password: ${{ secrets.DROPLET_PASSWORD }}
+        port: ${{ secrets.DROPLET_PORT }}
+        source: .
+        target: /back-end
+        
+    - name: Deploy to Droplet
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.DROPLET_IP }}
+        username: ${{ secrets.DROPLET_USERNAME }}
+        password: ${{ secrets.DROPLET_PASSWORD }}
+        port: ${{ secrets.DROPLET_PORT }}
+        script: |
+          cd /back-end
+          docker-compose pull
+          docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
