@@ -10,7 +10,10 @@ const Segment = sequelize.define(
       type: DataTypes.FLOAT,
       allowNull: true,
     },
-    // Model attributes are defined here
+    seatsAvailable: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
     startLocation: {
       type: DataTypes.INTEGER,
       references: {

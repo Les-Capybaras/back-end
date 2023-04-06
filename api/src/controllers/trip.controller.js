@@ -52,7 +52,6 @@ exports.create = async (req, res) => {
   // Save Trip in the database
   try {
     dbTrip = await Trip.create(trip);
-    console.log(dbTrip);
   } catch (err) {
     res.status(500).send({
       message: err.message || "Some error occurred while creating the Trip.",
@@ -83,6 +82,7 @@ exports.create = async (req, res) => {
 
     let segment = {
       price: price,
+      seatsAvailable: dbTrip.seats,
       startLocation: dbLocations[index - 1].id,
       endLocation: dbLocations[index].id,
       tripId: dbTrip.id,
@@ -304,7 +304,6 @@ function getSegmentPrice(firstStart, lastEnd, segmentStart, segmentEnd, trip) {
       segmentEnd.longitude,
       segmentEnd.latitude
     );
-    console.log(segmentDistance, trip.price, totalDistance);
     return Math.round((segmentDistance * trip.price / totalDistance) * 100) / 100;
 }
 
