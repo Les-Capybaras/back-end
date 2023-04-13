@@ -21,6 +21,10 @@ const Trip = sequelize.define('Trip', {
         type: DataTypes.FLOAT,
         allowNull: false
     },
+    estimatedDuration: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
     driverId: {
         type: DataTypes.INTEGER,
         references: {

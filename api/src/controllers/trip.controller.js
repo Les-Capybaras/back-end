@@ -47,6 +47,7 @@ exports.create = async (req, res) => {
     seats: req.body.seats,
     price: req.body.price,
     driverId: driver,
+    estimatedDuration: req.body.estimatedDuration,
   };
 
   // Save Trip in the database

@@ -15,6 +15,10 @@ const tripSchema = {
     errorMessage: "Price is required",
     isFloat: true,
   },
+  estimatedDuration: {
+    notEmpty: true,
+    errorMessage: "Estimated duration is required",
+  },
   steps: {
     notEmpty: true,
     errorMessage: "Steps are required",
