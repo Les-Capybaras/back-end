@@ -139,6 +139,11 @@ const { tripSchema, searchSchema } = require('../schemas/trip-schema');
  *               $ref: '#/components/schemas/Trip'
  *       500:
  *         description: Server error
+ * /available:
+ *   get:
+ *     tags: [Trips]
+ *     summary: Retrieve available trips.
+ *     description: Retrieve all available trips from database.
  */
 
 module.exports = app => {
