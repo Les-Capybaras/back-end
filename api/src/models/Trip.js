@@ -22,7 +22,7 @@ const Trip = sequelize.define('Trip', {
         allowNull: false
     },
     estimatedDuration: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false
     },
     driverId: {

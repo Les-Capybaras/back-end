@@ -11,15 +11,75 @@
  *     tags: [Requests]
  *     summary: Request a seat in a trip (n segments).
  *     description: Request a seat in a trip (n segments).
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the trip to request a seat in.
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               segmentIds:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 description: List of segment IDs for the trip.
+ *           example:
+ *             segmentIds: [1, 2]
+ *     responses:
+ *       '200':
+ *         description: Successfully requested a seat in the trip.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: Status of the request.
+ *                 id:
+ *                   type: integer
+ *                   description: ID of the request.
+ *                 userId:
+ *                   type: integer
+ *                   description: ID of the user making the request.
+ *                 tripId:
+ *                   type: string
+ *                   description: ID of the trip the request is for.
+ *               example:
+ *                 status: pending
+ *                 id: 1
+ *                 userId: 2
+ *                 tripId: "1"
+ *
  * /request/:id/accept:
  *   get:
  *     tags: [Requests]
  *     summary: Accept a request to join a trip.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the trip to request a seat in.
+ *         required: true
+ *         schema:
+ *           type: integer
  * /request/:id/reject:
  *   get:
  *     tags: [Requests]
  *     summary: Reject a request to join a trip.
- *   
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the trip to request a seat in.
+ *         required: true
+ *         schema:
+ *           type: integer
  */
 
 module.exports = app => {

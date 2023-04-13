@@ -26,11 +26,7 @@ createSchema = {
   password2: {
     notEmpty: true,
     errorMessage: "Password confirmation is required",
-  },
-  birthdate: {
-    notEmpty: true,
-    errorMessage: "birthdate is required",
-  },
+  }
 };
 
 loginSchema = {
