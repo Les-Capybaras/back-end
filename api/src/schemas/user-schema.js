@@ -1,7 +1,11 @@
 createSchema = {
-  userName: {
+  firstname: {
     notEmpty: true,
-    errorMessage: "Username is required",
+    errorMessage: "firstname is required",
+  },
+  lastname: {
+    notEmpty: true,
+    errorMessage: "lastname is required",
   },
   email: {
     notEmpty: true,
@@ -23,9 +27,9 @@ createSchema = {
     notEmpty: true,
     errorMessage: "Password confirmation is required",
   },
-  age: {
+  birthdate: {
     notEmpty: true,
-    errorMessage: "Age is required",
+    errorMessage: "birthdate is required",
   },
 };
 

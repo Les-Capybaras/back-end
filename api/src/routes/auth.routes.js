@@ -21,7 +21,7 @@ const { createSchema, loginSchema } = require('../schemas/user-schema');
  *     description: Retreive connected user data from database.
  *     responses:
  *       200:
- *         description: All of the users.
+ *         description: Get the current user based on the bearer token.
  *         content:
  *           application/json:
  *             schema:
@@ -31,13 +31,29 @@ const { createSchema, loginSchema } = require('../schemas/user-schema');
  *     tags: [Auth]
  *     summary: Login a user. 
  *     description: Login a user.
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
  *     responses:
  *       200:
- *         description: All of the users.
+ *         description: Get the token and the user object.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
+ *               type: object
+ *               properties:
+ *                 token:
+ *                  type: string
+ *                 user:
+ *                  type: object
+ *             
  * /auth/register:
  *   post:
  *     tags: [Auth]
@@ -55,7 +71,24 @@ const { createSchema, loginSchema } = require('../schemas/user-schema');
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 fisrtname:
+ *                   type: string
+ *                 lastname:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 password:
+ *                   type: string
+ *                 birthdate:
+ *                   type: string
+ *                 updatedAt:
+ *                   type: string
+ *                 createdAt:
+ *                   type: string
  *       500:
  *         description: Server error
  */

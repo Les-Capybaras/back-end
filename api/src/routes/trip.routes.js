@@ -12,70 +12,43 @@ const { tripSchema, searchSchema } = require('../schemas/trip-schema');
  *         - seats
  *         - price
  *         - steps
- *       properties:
- *         id:
- *           type: integer
- *           description: The Trip ID
- *         state:
- *           type: string
- *           description: The state of the Trip
- *           enum: [En attente, En cours, Terminé]
- *           default: En attente
- *         startDate:
- *           type: string
- *           format: date-time
- *           description: The start dateTime of the Trip
- *         seats:
- *           type: integer
- *           description: The number of seats available for the Trip
- *         price:
- *           type: float
- *           description: The price of the trip
- *         driverId:
- *           type: integer
- *           description: The id of the driver
- *         steps:
- *           type: array
- *           description: An array that contains the steps of the Trip 
- *           items:
- *             type: object
- *             properties:
- *               address:
- *                 type: string
- *                 required: true
- *               name:
- *                 type: string
- *                 required: true
- *               order:
- *                 type: integer
- *                 required: true
  *       example:
- *         id: 1
- *         state: "En attente"
- *         startDate: 2023-04-09 12:24:03
- *         seats: 4
- *         price: 13
- *         driver: {
+ *         dbTrip: {
+ *           state: "soon",
  *           id: 1,
- *           userName: "John",
- *           email: "john@doe.com",
+ *           startDate: "2023-12-17T12:24:03.000Z",
+ *           seats: 4,
+ *           price: 13,
+ *           driverId: 1,
+ *           driver: {
+  *            id: 1,
+  *            firstname: "John",
+  *            lastname: "John",
+  *            email: "john@doe.com",
+  *          },
+ *           createdAt: "2021-04-09T12:24:03.000Z",  
+ *           updatedAt: "2021-04-09T12:24:03.000Z",  
  *         }
- *         segments: [
+ *         dbLocations: [
  *           {
  *             id: 1,
- *             start: {
- *               id: 1,
- *               name: "Paris",
- *               address: "11 impasse de la gare",
- *             },
- *             end: {
- *               id: 2,
- *               name: "Lille",
- *               address: "11 impasse de la gare",
- *             },
+ *             name: "Paris",
+ *             address: "11 impasse de la gare",
+ *             longitude: 1.34555,
+ *             latitude: 5.5,
  *           }
  *         ]
- *    
+ *         dbSegments: [
+ *           {
+ *             id: 1,
+ *             price: 4.67,
+ *             seatsAvailable: 4,
+ *             startLocation: 1,
+ *             endLocation: 2,
+ *             tripId: 1
+ *           }
+ *         ]
+ *     
  */
 
 /**
@@ -157,10 +130,6 @@ const { tripSchema, searchSchema } = require('../schemas/trip-schema');
  *     description: Create a trip in database.
  *     requestBody:
  *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Trip'
  *     responses:
  *       200:
  *         description: The created Trip.

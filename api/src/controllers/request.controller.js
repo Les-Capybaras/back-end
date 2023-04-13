@@ -245,7 +245,6 @@ exports.accept = async (req, res) => {
 };
 
 exports.reject = async (req, res) => {
-  // TODO : Mark Request as denied
 
   // Check for validation errors
   const errors = validationResult(req);

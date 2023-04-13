@@ -65,13 +65,13 @@ module.exports = () => {
   const syncDatabase = async () => {
     try {
       // await sequelize.sync({ force: true, alter: true });
-      await User.sync({ alter: true });
-      await Car.sync({ alter: true });
-      await Trip.sync({ alter: true });
-      await Location.sync({ alter: true });
-      await Segment.sync({ alter: true });
-      await Request.sync({ alter: true });
-      await RequestSegments.sync({ alter: true });
+      await User.sync();
+      await Car.sync();
+      await Trip.sync();
+      await Location.sync();
+      await Segment.sync();
+      await Request.sync();
+      await RequestSegments.sync();
       console.log("[DATABASE] - Synced database.");
     } catch (error) {
       console.error("[DATABASE] - Unable to sync database:", error);

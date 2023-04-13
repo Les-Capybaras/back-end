@@ -5,10 +5,14 @@
  *     User:
  *       type: object
  *       required:
+ *         - firstname
+ *         - lastname
  *         - email
  *         - password
  *       properties:
- *         username:
+ *         firstname:
+ *           type: string
+ *         lastname:
  *           type: string
  *         email:
  *           type: string
@@ -16,13 +20,15 @@
  *           type: string
  *         password2:
  *           type: string
- *         age:
- *           type: integer
+ *         birthdate:
+ *           type: date
  *       example:
- *         username: Test
- *         email: test@test.com
- *         password: changeme
- *         age: 22
+ *         firstname: Aya
+ *         lastname: Haddad
+ *         email: aya@haddad.com
+ *         password: rebeudeter
+ *         password2: rebeudeter
+ *         birthdate: 1999-01-01
  */
 
 /**

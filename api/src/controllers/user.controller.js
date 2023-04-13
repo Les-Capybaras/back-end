@@ -64,10 +64,11 @@ exports.create = async (req, res) => {
 
   // Create a User object
   const user = {
-    userName: req.body.userName,
+    firstname: req.body.firstname,
+    lastname: req.body.lastname,
     email: req.body.email,
     password: await hashPassword(req.body.password),
-    age: req.body.age,
+    birthdate: req.body.birthdate,
   };
 
   try {
