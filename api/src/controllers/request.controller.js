@@ -180,9 +180,7 @@ exports.accept = async (req, res) => {
     }
   } catch (err) {
     return res.status(500).send({
-      message:
-        err.message ||
-        `Some error occurred while retrieving trip.`,
+      message: err.message || `Some error occurred while retrieving trip.`,
     });
   }
 
@@ -231,7 +229,7 @@ exports.accept = async (req, res) => {
           {
             where: {
               id: requestSegment.SegmentId,
-              seatsAvailable: { [Op.gt]: 0 }
+              seatsAvailable: { [Op.gt]: 0 },
             },
           }
         )
@@ -248,4 +246,79 @@ exports.accept = async (req, res) => {
 
 exports.reject = async (req, res) => {
   // TODO : Mark Request as denied
+
+  // Check for validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  // Get the creator
+  const token =
+    req.header("Authorization") && req.header("Authorization").split(" ")[1];
+  const driver = jwt.verify(token, process.env.JWT_SECRET).id;
+
+  const requestId = req.params.id;
+
+  // Check if request exists
+  let request = {};
+  try {
+    request = await Request.findByPk(requestId);
+
+    // Check if request is still pending
+    if (request.status !== "pending") {
+      return res.status(400).send({
+        message: `Request is not available.`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({
+      message:
+        err.message ||
+        `Some error occurred while retrieving request with id ${requestId}.`,
+    });
+  }
+
+  // Check if user is the driver
+  let trip = {};
+  try {
+    trip = await Trip.findOne({
+      where: {
+        id: request.tripId,
+      },
+    });
+
+    if (trip.driverId !== driver) {
+      return res.status(400).send({
+        message: `You are not the driver of this trip.`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({
+      message: err.message || `Some error occurred while retrieving trip.`,
+    });
+  }
+
+  // Edit the request status
+  let updatedRequest = {};
+  try {
+    updatedRequest = await Request.update(
+      {
+        status: "rejected",
+      },
+      {
+        where: {
+          id: requestId,
+        },
+      }
+    );
+  } catch (err) {
+    return res.status(500).send({
+      message: err.message || `Some error occurred while updating request.`,
+    });
+  }
+
+  res.status(200).send({
+    message: `Request with id ${requestId} has been rejected.`,
+  });
 };

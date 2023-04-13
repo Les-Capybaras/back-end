@@ -6,11 +6,19 @@
  * tags:
  *  name: Requests
  *  description: Requests management
- * /requests:
+ * /request/:id:
  *   post:
  *     tags: [Requests]
  *     summary: Request a seat in a trip (n segments).
  *     description: Request a seat in a trip (n segments).
+ * /request/:id/accept:
+ *   get:
+ *     tags: [Requests]
+ *     summary: Accept a request to join a trip.
+ * /request/:id/reject:
+ *   get:
+ *     tags: [Requests]
+ *     summary: Reject a request to join a trip.
  *   
  */
 
