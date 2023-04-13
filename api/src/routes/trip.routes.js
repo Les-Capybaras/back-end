@@ -143,14 +143,19 @@ const { tripSchema, searchSchema } = require('../schemas/trip-schema');
 
 module.exports = app => {
     const trips = require("../controllers/trip.controller.js");
+
+    const { isAuth } = require("../middlewares/auth.js");
   
     var router = require("express").Router();
   
     // Create a new Trip
-    router.post("/", checkSchema(tripSchema), trips.create);
+    router.post("/", isAuth, checkSchema(tripSchema), trips.create);
   
     // Retrieve all Trip
     router.get("/", trips.findAll);
+
+    // Retreive available trips
+    router.get("/available", trips.findAvailable);
   
     // Retrieve a single Trip with id
     router.get("/:id", trips.findOne);

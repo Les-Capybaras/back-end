@@ -148,6 +148,38 @@ exports.findAll = (req, res) => {
     });
 };
 
+exports.findAvailable = async (req, res) => {
+  try {
+    const trips = await Trip.findAll({
+      where: {
+        state: "soon"
+      },
+      include: [
+        {
+          model: User,
+          as: "driver",
+          attributes: { exclude: ["createdAt", "updatedAt"] },
+        },
+        {
+          model: Segment,
+          as: "segments",
+          attributes: { exclude: ["startLocation", "endLocation", "tripId"] },
+          include: [
+            { model: Location, as: "start" },
+            { model: Location, as: "end" },
+          ],
+        },
+      ],
+    });
+
+    res.send(trips);
+  } catch (error) {
+    res.status(500).send({
+      message: error.message || "Some error occurred while retrieving Trips.",
+    });
+  }
+}
+
 // Find a single Trip with an id
 exports.findOne = (req, res) => {
   const tripId = req.params.id;

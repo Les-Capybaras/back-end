@@ -84,19 +84,21 @@
 
 module.exports = app => {
     const requests = require("../controllers/request.controller.js");
+
+    const { isAuth } = require("../middlewares/auth.js");
   
     var router = require("express").Router();
 
     // TODO : add the schema for the request
     
     // Request to join a trip as a passenger
-    router.post("/:id", requests.request);
+    router.post("/:id", isAuth, requests.request);
 
     // Accept a passenger request
-    router.get("/:id/accept", requests.accept);
+    router.get("/:id/accept", isAuth, requests.accept);
 
     // Reject a passenger request
-    router.get("/:id/reject", requests.reject);
+    router.get("/:id/reject", isAuth, requests.reject);
 
     app.use('/api/request', router);
 };
