@@ -7,6 +7,37 @@ const Segment = require("../models/Segment");
 const { Op } = require("sequelize");
 const { Sequelize } = require("sequelize");
 
+exports.get = async (req, res) => {
+  const token = req.header("Authorization") && req.header("Authorization").split(" ")[1];
+  const userId = jwt.verify(token, process.env.JWT_SECRET).id;
+
+  let requests = [];
+  try {
+    requests = await Request.findAll({
+      where: {
+        status: {
+          [Op.eq]: "pending",
+        },
+      },
+      include: [
+        {
+          model: Trip,
+          as: "trip",
+        },
+      ],
+    });
+  }
+  catch (err) {
+    return res.status(500).send({
+      message: err.message || `Some error occurred while retrieving requests.`,
+    });
+  }
+  //Retrieve all requests where the user is the trip driver
+  const driverRequests = requests.filter((request) => request.trip.driverId === userId);
+
+  res.status(200).send(driverRequests);
+};
+
 exports.request = async (req, res) => {
   // TODO : Check if available seats
   // TODO : Check everything before creation
